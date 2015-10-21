@@ -1,0 +1,15 @@
+{
+  "name": "performance-polyfill",
+  "version": "0.0.1",
+  "homepage": "https://github.com/micro-perf/performance-polyfill/",
+  "authors": [
+    "YongWoo Jeon<yongwoo.jeon@navercorp.com>"
+  ],
+  "description": "Performance polyfill",
+  "main": "/src/perf.js",
+  "keywords": [
+    "performance",
+    "polyfill"
+  ],
+  "license": "MIT"
+}

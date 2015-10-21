@@ -1,0 +1,9 @@
+.project
+.settings
+*~
+.DS_Store
+.bower.json
+/build
+/dist
+/node_modules
+/bower_components
