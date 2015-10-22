@@ -19,8 +19,9 @@ module.exports = function(config) {
       ]
     },
     files: [
-		'src/rafi.js',
-		'test/*.spec.js'
+    'test/wrap.js',
+		'src/performance.js',
+		'test/*.test.js'
     ]
   });
 };

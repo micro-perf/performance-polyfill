@@ -28,3 +28,7 @@ _wrap_( function( global ) {
 // performance.getEntries();
 // performance.getEntriesByType();
 // performance.getEntriesByName();
+
+function _wrap_ ( fp ) {
+	fp( window );
+}
