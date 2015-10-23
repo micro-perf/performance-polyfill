@@ -4,6 +4,7 @@ var jscs = require('gulp-jscs');
 var rename = require('gulp-rename');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
+var fs = require("fs");
 
 
 gulp.task('jscs', function () {
@@ -15,7 +16,11 @@ gulp.task('test', function(done) {
     return karma.start({
 		configFile: __dirname + '/karma.conf.js',
 		singleRun: true
-	}, done);
+	}, function(){
+		fs.readFile(__dirname + '/build/reports/coverage/text-summary.txt', "utf-8", function(err, _data) {
+	    	console.log(_data);
+	    });
+	});
 });
 
 gulp.task('merge', function(){
