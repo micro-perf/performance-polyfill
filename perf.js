@@ -1,6 +1,7 @@
 // @TODO
 // ref - http://www.w3.org/TR/performance-timeline-2/, http://www.w3.org/TR/user-timing/
-// https://code.google.com/p/chromium/codesearch#chromium/src/third_party/WebKit/Source/core/timing/&sq=package:chromium&type=cs
+// https://code.google.com/p/chromium/codesearch#chromium/
+// src/third_party/WebKit/Source/core/timing/&sq=package:chromium&type=cs
 
 _wrap_( function( global ) {
 	var hasPerformance = global.performance;
@@ -14,6 +15,11 @@ _wrap_( function( global ) {
 
 	var performanceEntryHash = {};
 	var performanceEntryList = [];
+
+	function performanceReset() {
+		performanceEntryHash = {};
+		performanceEntryList = [];
+	}
 
 	/**
 	 * The Performance.now() method returns a DOMHighResTimeStamp, measured in milliseconds,
@@ -45,8 +51,7 @@ _wrap_( function( global ) {
 	 * This method stores a timestamp with the associated name (a "mark").
 	 * @name performance.mark
 	 * @param {String} name
-	 * @return {DOMHighResTimeStamp} now
-	 * @see http://www.w3.org/TR/hr-time/#dom-performance-now
+	 * @see http://www.w3.org/TR/user-timing/#dom-performance-mark
 	 */
 	global.performance.mark = function( name ) {
 		var performanceEntry = new PerformanceEntry( name, "mark", global.performance.now(), 0 );
@@ -54,18 +59,39 @@ _wrap_( function( global ) {
 		performanceEntryHash[ name ] = performanceEntry;
 	}
 
-	return {
-		performanceEntryHash: performanceEntryHash,
-		performanceEntryList: performanceEntryList,
-		PerformanceEntry: PerformanceEntry
+	/**
+	 * Removes marks and their associated time values.
+	 * @name performance.clearMarks
+	 * @param {string} [markName] - markName
+	 * @see http://www.w3.org/TR/user-timing/#dom-performance-clearmarks
+	 */
+	global.performance.clearMarks = function( markName ) {
+		if ( !markName ) {
+			performanceReset();
+		} else if ( markName ) {
+			var reEntryList = [];
+			for ( var i = 0; i < performanceEntryList.length; i++ ) {
+				if ( performanceEntryList[i].name != markName ) {
+					reEntryList.push( performanceEntryList[i] );
+				}
+			};
+			performanceEntryList = reEntryList;
+			performanceEntryHash[ markName ] = undefined;
+		}
+	}
+
+	return function() {
+		return {
+			performanceEntryHash: performanceEntryHash,
+			performanceEntryList: performanceEntryList,
+			PerformanceEntry: PerformanceEntry
+		};
 	};
 } );
 
 // performance.now();
 
 // User Timing
-// performance.mark();
-// performance.clearMarks();
 // performance.measure();
 // performance.clearMeasures();
 
