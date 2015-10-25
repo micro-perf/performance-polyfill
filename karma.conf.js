@@ -21,7 +21,7 @@ module.exports = function(config) {
     files: [
     'test/wrap.js',
 		'src/performance.js',
-		'test/*.test.js'
+		'test/perf/*.test.js'
     ]
   });
 };

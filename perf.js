@@ -16,33 +16,44 @@ _wrap_( function( global ) {
 	var performanceEntryHash = {};
 	var performanceEntryList = [];
 
-	function performanceReset() {
-		performanceEntryHash = {};
-		performanceEntryList = [];
+	function performanceReset( type ) {
+		newEntryHash = {};
+		newEntryList = [];
+		var entry;
+		for ( var i = 0, l = performanceEntryList.length; i < l; i++ ) {
+			entry = performanceEntryList[i];
+			if ( entry.entryType !== type ) {
+				newEntryHash[ entry.name ] = entry;
+				newEntryList.push( entry );
+			}
+		}
+
+		performanceEntryHash = newEntryHash;
+		performanceEntryList = newEntryList;
 	}
 
 	var RestrictedKeyMap = {
 		"navigationStart": true,
-	    "unloadEventStart": true,
-	    "unloadEventEnd": true,
-	    "redirectStart": true,
-	    "redirectEnd": true,
-	    "fetchStart": true,
-	    "domainLookupStart": true,
-	    "domainLookupEnd": true,
-	    "connectStart": true,
-	    "connectEnd": true,
-	    "secureConnectionStart": true,
-	    "requestStart": true,
-	    "responseStart": true,
-	    "responseEnd": true,
-	    "domLoading": true,
-	    "domInteractive": true,
-	    "domContentLoadedEventStart": true,
-	    "domContentLoadedEventEnd": true,
-	    "domComplete": true,
-	    "loadEventStart": true,
-	    "loadEventEnd": true
+		"unloadEventStart": true,
+		"unloadEventEnd": true,
+		"redirectStart": true,
+		"redirectEnd": true,
+		"fetchStart": true,
+		"domainLookupStart": true,
+		"domainLookupEnd": true,
+		"connectStart": true,
+		"connectEnd": true,
+		"secureConnectionStart": true,
+		"requestStart": true,
+		"responseStart": true,
+		"responseEnd": true,
+		"domLoading": true,
+		"domInteractive": true,
+		"domContentLoadedEventStart": true,
+		"domContentLoadedEventEnd": true,
+		"domComplete": true,
+		"loadEventStart": true,
+		"loadEventEnd": true
 	};
 
 	/**
@@ -91,7 +102,7 @@ _wrap_( function( global ) {
 	 */
 	global.performance.clearMarks = function( markName ) {
 		if ( !markName ) {
-			performanceReset();
+			performanceReset( "mark" );
 		} else if ( markName ) {
 			var reEntryList = [];
 			for ( var i = 0; i < performanceEntryList.length; i++ ) {
@@ -126,6 +137,7 @@ _wrap_( function( global ) {
 		} else if ( performanceEntryHash[startMark] ) {
 			startTime = performanceEntryHash[startMark].startTime;
 		} else {
+
 			// @TODO #11
 		}
 
@@ -134,10 +146,11 @@ _wrap_( function( global ) {
 		} else if ( performanceEntryHash[endMark] ) {
 			endTime = performanceEntryHash[endMark].startTime;
 		} else {
+
 			// @TODO #11
 		}
 
-		var performanceEntry = new PerformanceEntry( measureName, "measure", currentTime, endTime - startTime);
+		var performanceEntry = new PerformanceEntry( measureName, "measure", currentTime, endTime - startTime );
 		performanceEntryList.push( performanceEntry );
 		performanceEntryHash[ measureName ] = performanceEntry;
 	}
