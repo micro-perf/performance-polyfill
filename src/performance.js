@@ -1,7 +1,7 @@
 // @TODO
 // ref - http://www.w3.org/TR/performance-timeline-2/, http://www.w3.org/TR/user-timing/
 // https://code.google.com/p/chromium/codesearch#chromium/
-// src/third_party/WebKit/Source/core/timing/&sq=package:chromium&type=cs
+// src/third_party/WebKit/Source/core/timing/PerformanceUserTiming.cpp
 
 _wrap_( function( global ) {
 	var hasPerformance = global.performance;
@@ -20,6 +20,30 @@ _wrap_( function( global ) {
 		performanceEntryHash = {};
 		performanceEntryList = [];
 	}
+
+	var RestrictedKeyMap = {
+		"navigationStart": true,
+	    "unloadEventStart": true,
+	    "unloadEventEnd": true,
+	    "redirectStart": true,
+	    "redirectEnd": true,
+	    "fetchStart": true,
+	    "domainLookupStart": true,
+	    "domainLookupEnd": true,
+	    "connectStart": true,
+	    "connectEnd": true,
+	    "secureConnectionStart": true,
+	    "requestStart": true,
+	    "responseStart": true,
+	    "responseEnd": true,
+	    "domLoading": true,
+	    "domInteractive": true,
+	    "domContentLoadedEventStart": true,
+	    "domContentLoadedEventEnd": true,
+	    "domComplete": true,
+	    "loadEventStart": true,
+	    "loadEventEnd": true
+	};
 
 	/**
 	 * The Performance.now() method returns a DOMHighResTimeStamp, measured in milliseconds,
@@ -80,6 +104,46 @@ _wrap_( function( global ) {
 		}
 	}
 
+	/**
+	 * This method stores the DOMHighResTimeStamp duration between two marks along with the associated name (a "measure").
+	 * @name performance.measure
+	 * @param {string} measureName - measureName
+	 * @param {string} [startMark] - startMark
+	 * @param {string} [endMark] - endMark
+	 * @see http://www.w3.org/TR/user-timing/#dom-performance-measure
+	 */
+	global.performance.measure = function( measureName, startMark, endMark ) {
+		var isUndefinedStartMark = startMark === undefined;
+		var isUndefinedEndMark = endMark === undefined;
+		var duration = 0;
+		var currentTime = global.performance.now();
+
+		var startTime = 0;
+		var endTime = 0;
+
+		if ( isUndefinedStartMark ) {
+			startTime = 0;
+		} else if ( performanceEntryHash[startMark] ) {
+			startTime = performanceEntryHash[startMark].startTime;
+		} else {
+
+			// @TODO #11
+		}
+
+		if ( isUndefinedEndMark ) {
+			endTime = currentTime;
+		} else if ( performanceEntryHash[endMark] ) {
+			endTime = performanceEntryHash[endMark].startTime;
+		} else {
+
+			// @TODO #11
+		}
+
+		var performanceEntry = new PerformanceEntry( measureName, "measure", currentTime, endTime - startTime );
+		performanceEntryList.push( performanceEntry );
+		performanceEntryHash[ measureName ] = performanceEntry;
+	}
+
 	return function() {
 		return {
 			performanceEntryHash: performanceEntryHash,
@@ -92,7 +156,6 @@ _wrap_( function( global ) {
 // performance.now();
 
 // User Timing
-// performance.measure();
 // performance.clearMeasures();
 
 // Performance Timeline
