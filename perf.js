@@ -101,7 +101,7 @@ _wrap_( function( global ) {
 	 * @see http://www.w3.org/TR/user-timing/#dom-performance-clearmarks
 	 */
 	global.performance.clearMarks = function( markName ) {
-		if ( !markName ) {
+		if ( markName === undefined ) {
 			performanceReset( "mark" );
 		} else if ( markName ) {
 			var reEntryList = [];
