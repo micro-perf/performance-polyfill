@@ -85,6 +85,28 @@ describe("performance.measure", function() {
 		expect(performanceEntry.duration).toBe(3);
 	});
 
+	it("Throws a exception if the start mark does not exist.", function(){
+		// Given
+		var notExistMark = "foo";
+		mock.performance.mark("start_mark");
+		// When
+		// Then
+		expect(function(){
+				mock.performance.measure("test", notExistMark);
+		}).toThrowError("The mark '" + notExistMark + "' does not exist.");
+	});
+
+	it("Throws a exception if the end mark does not exist.", function(){
+		// Given
+		var notExistMark = "foo";
+		mock.performance.mark("start_mark");
+		// When
+		// Then
+		expect(function(){
+				mock.performance.measure("test", "start_mark", notExistMark);
+		}).toThrowError("The mark '" + notExistMark + "' does not exist.");
+	});
+
 });
 
 describe("performance.clearMeasures", function() {

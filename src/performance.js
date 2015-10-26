@@ -150,8 +150,7 @@ _wrap_( function( global ) {
 		} else if ( performanceEntryHash[startMark] ) {
 			startTime = performanceEntryHash[startMark].startTime;
 		} else {
-
-			// @TODO #11
+			throw Error( "The mark '" + startMark + "' does not exist." );
 		}
 
 		if ( isUndefinedEndMark ) {
@@ -159,8 +158,7 @@ _wrap_( function( global ) {
 		} else if ( performanceEntryHash[endMark] ) {
 			endTime = performanceEntryHash[endMark].startTime;
 		} else {
-
-			// @TODO #11
+			throw Error( "The mark '" + endMark + "' does not exist." );
 		}
 
 		var performanceEntry = new PerformanceEntry( measureName, "measure", currentTime, endTime - startTime );
@@ -186,11 +184,6 @@ _wrap_( function( global ) {
 		};
 	};
 } );
-
-// performance.now();
-
-// User Timing
-// performance.clearMeasures();
 
 // Performance Timeline
 // performance.getEntries();

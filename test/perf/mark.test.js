@@ -78,8 +78,8 @@ describe("performance.mark", function() {
 	it("should not be specified mark names", function(){
 		// Given
 		// When
-		// Then
 		for(var i in RestrictedKeyMap){
+			// Then
 			expect((function(name){
 				return function(){
 					mock.performance.mark(name);
