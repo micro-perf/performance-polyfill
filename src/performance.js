@@ -56,6 +56,26 @@ _wrap_( function( global ) {
 		"loadEventEnd": true
 	};
 
+	function removeEntry( type, name ) {
+		if ( name === undefined ) {
+			performanceReset( type );
+		} else {
+			var reEntryList = [];
+			var entry;
+			for ( var i = 0; i < performanceEntryList.length; i++ ) {
+				entry = performanceEntryList[i];
+				if ( entry.name != name || entry.entryType !== type ) {
+					reEntryList.push( entry );
+				}
+			};
+			performanceEntryList = reEntryList;
+			entry = performanceEntryHash[ name ];
+			if ( entry && entry.entryType === type ) {
+				performanceEntryHash[ name ] = undefined;
+			}
+		}
+	}
+
 	/**
 	 * The Performance.now() method returns a DOMHighResTimeStamp, measured in milliseconds,
 	 * accurate to one thousandth of a millisecond.
@@ -101,18 +121,7 @@ _wrap_( function( global ) {
 	 * @see http://www.w3.org/TR/user-timing/#dom-performance-clearmarks
 	 */
 	global.performance.clearMarks = function( markName ) {
-		if ( markName === undefined ) {
-			performanceReset( "mark" );
-		} else if ( markName ) {
-			var reEntryList = [];
-			for ( var i = 0; i < performanceEntryList.length; i++ ) {
-				if ( performanceEntryList[i].name != markName ) {
-					reEntryList.push( performanceEntryList[i] );
-				}
-			};
-			performanceEntryList = reEntryList;
-			performanceEntryHash[ markName ] = undefined;
-		}
+		removeEntry( "mark", markName );
 	}
 
 	/**
@@ -153,6 +162,16 @@ _wrap_( function( global ) {
 		var performanceEntry = new PerformanceEntry( measureName, "measure", currentTime, endTime - startTime );
 		performanceEntryList.push( performanceEntry );
 		performanceEntryHash[ measureName ] = performanceEntry;
+	}
+
+	/**
+	 * Removes measures and their associated time values.
+	 * @name performance.clearMeasures
+	 * @param {string} [measureName] - measureName
+	 * @see http://www.w3.org/TR/user-timing/#dom-performance-clearmeasures
+	 */
+	global.performance.clearMeasures = function( measureName ) {
+		removeEntry( "measure", measureName );
 	}
 
 	return function() {

@@ -86,3 +86,92 @@ describe("performance.measure", function() {
 	});
 
 });
+
+describe("performance.clearMeasures", function() {
+	var mock = {
+		count : 0,
+		Date : function(){
+			this.getTime = function(){
+				mock.count++;
+				return mock.count;
+			}
+		}
+	};
+	
+	beforeEach(function() {
+		mock.count = 0;
+		getPerformanceInfo = cache(mock);
+		mock.performance.measure("something");
+	});
+
+	it("If the measureName argument is not specified, this method removes all measures and their associated DOMHighResTimeStamp durations.", function() {
+		// Given
+		var info;
+		var entryList;
+		var entryHash;
+		var performanceEntry;		
+		// When
+		mock.performance.clearMeasures();
+
+		info = getPerformanceInfo();
+		entryList = info.performanceEntryList;
+		entryHash = info.performanceEntryHash;
+		// Then
+		expect(entryList).toEqual([]);
+		expect(entryHash).toEqual({});
+	});
+
+	it("If the measureName argument is specified, this method removes all DOMHighResTimeStamp durations for the given measure name.", function() {
+		// Given
+		var info;
+		var entryList;
+		var entryHash;
+		var performanceEntry;
+		mock.performance.measure("something2");
+		// When
+		mock.performance.clearMeasures("something");
+
+		info = getPerformanceInfo();
+		entryList = info.performanceEntryList;
+		entryHash = info.performanceEntryHash;
+		// Then
+		expect(entryList.length).toBe(1);
+		expect(entryHash["something"]).not.toBeDefined();
+	});
+
+	it("If the measureName argument is specified but the specified measureName does not exist, this method will do nothing.", function() {
+		// Given
+		var info;
+		var entryList;
+		var entryHash;
+		var performanceEntry;
+		// When
+		mock.performance.clearMeasures("something2");
+
+		info = getPerformanceInfo();
+		entryList = info.performanceEntryList;
+		entryHash = info.performanceEntryHash;
+		// Then
+		expect(entryList.length).toBe(1);
+		expect(entryHash["something"]).toBeDefined();
+	});
+
+	it("The clearMarks have to reset only measure type.", function() {
+		// Given
+		var info;
+		var entryList;
+		var entryHash;
+		var performanceEntry;
+		// When
+		mock.performance.mark("mark");
+		mock.performance.clearMeasures();
+
+		info = getPerformanceInfo();
+		entryList = info.performanceEntryList;
+		entryHash = info.performanceEntryHash;
+		// Then
+		expect(entryList.length).toBe(1);
+		expect(entryHash["mark"]).toBeDefined();
+	});
+
+});
