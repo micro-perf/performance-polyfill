@@ -109,9 +109,8 @@ _wrap_( function( global ) {
 	 * @see http://www.w3.org/TR/user-timing/#dom-performance-mark
 	 */
 	global.performance.mark = function( name ) {
-		
 		if ( RestrictedKeyMap[name] ) {
-			throw Error("'" + name + "' is part of the PerformanceTiming interface, and cannot be used as a mark name.");
+			throw Error( "'" + name + "' is part of the PerformanceTiming interface, and cannot be used as a mark name." );
 		}
 
 		var performanceEntry = new PerformanceEntry( name, "mark", global.performance.now(), 0 );
