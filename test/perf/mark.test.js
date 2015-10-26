@@ -1,3 +1,27 @@
+var RestrictedKeyMap = {
+	"navigationStart": true,
+	"unloadEventStart": true,
+	"unloadEventEnd": true,
+	"redirectStart": true,
+	"redirectEnd": true,
+	"fetchStart": true,
+	"domainLookupStart": true,
+	"domainLookupEnd": true,
+	"connectStart": true,
+	"connectEnd": true,
+	"secureConnectionStart": true,
+	"requestStart": true,
+	"responseStart": true,
+	"responseEnd": true,
+	"domLoading": true,
+	"domInteractive": true,
+	"domContentLoadedEventStart": true,
+	"domContentLoadedEventEnd": true,
+	"domComplete": true,
+	"loadEventStart": true,
+	"loadEventEnd": true
+};
+
 describe("performance.mark", function() {
 	var mock = {
 		count : 0,
@@ -49,6 +73,19 @@ describe("performance.mark", function() {
 		expect(performanceEntry.startTime).toBe(1);
 		expect(performanceEntry.duration).toBe(0);
 
+	});
+
+	it("should not be specified mark names", function(){
+		// Given
+		// When
+		// Then
+		for(var i in RestrictedKeyMap){
+			expect((function(name){
+				return function(){
+					mock.performance.mark(name);
+				}
+			})(i)).toThrowError("'" + i + "' is part of the PerformanceTiming interface, and cannot be used as a mark name.");
+		}
 	});
 });
 
