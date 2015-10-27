@@ -176,6 +176,41 @@ _wrap_( function( global ) {
 		removeEntry( "measure", measureName );
 	}
 
+	/**
+	 * This method returns a PerformanceEntryList object that contains a list of PerformanceEntry objects.
+	 * @name performance.getEntries
+	 * @param {Object} [PerformanceEntryFilterOptions] - filter
+	 * @param {String} [PerformanceEntryFilterOptions.entryType] - entryType of PerformanceEntry object.
+	 * @param {String} [PerformanceEntryFilterOptions.initiatorType] - initiatorType of PerformanceResourceTiming object. but not spported yet.
+	 * @param {String} [PerformanceEntryFilterOptions.name] - name of PerformanceEntry object.
+	 * @return {Array} performanceEntryList
+	 * @see http://www.w3.org/TR/performance-timeline-2/#widl-Performance-getEntries-PerformanceEntryList-PerformanceEntryFilterOptions-filter
+	 */
+	global.performance.getEntries = function( filter ) {
+		if ( filter === undefined ) {
+			return performanceEntryList;
+		}
+
+		var filterCallback;
+
+		if ( filter.entryType ) {
+			if ( filter.name ) {
+				filterCallback = function( entry ) {
+					return entry.entryType === filter.entryType && entry.name === filter.name;
+				}
+			} else {
+				filterCallback = function( entry ) {
+					return entry.entryType === filter.entryType;
+				}
+			}
+		} else if ( filter.name ) {
+			filterCallback = function( entry ) {
+				return entry.name === filter.name;
+			}
+		}
+
+		return performanceEntryList.filter( filterCallback );
+	}
 	return function() {
 		return {
 			performanceEntryHash: performanceEntryHash,

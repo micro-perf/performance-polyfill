@@ -109,9 +109,8 @@ _wrap_( function( global ) {
 	 * @see http://www.w3.org/TR/user-timing/#dom-performance-mark
 	 */
 	global.performance.mark = function( name ) {
-		
 		if ( RestrictedKeyMap[name] ) {
-			throw Error("'" + name + "' is part of the PerformanceTiming interface, and cannot be used as a mark name.");
+			throw Error( "'" + name + "' is part of the PerformanceTiming interface, and cannot be used as a mark name." );
 		}
 
 		var performanceEntry = new PerformanceEntry( name, "mark", global.performance.now(), 0 );
@@ -151,8 +150,7 @@ _wrap_( function( global ) {
 		} else if ( performanceEntryHash[startMark] ) {
 			startTime = performanceEntryHash[startMark].startTime;
 		} else {
-
-			// @TODO #11
+			throw Error( "The mark '" + startMark + "' does not exist." );
 		}
 
 		if ( isUndefinedEndMark ) {
@@ -160,8 +158,7 @@ _wrap_( function( global ) {
 		} else if ( performanceEntryHash[endMark] ) {
 			endTime = performanceEntryHash[endMark].startTime;
 		} else {
-
-			// @TODO #11
+			throw Error( "The mark '" + endMark + "' does not exist." );
 		}
 
 		var performanceEntry = new PerformanceEntry( measureName, "measure", currentTime, endTime - startTime );
@@ -179,6 +176,41 @@ _wrap_( function( global ) {
 		removeEntry( "measure", measureName );
 	}
 
+	/**
+	 * This method returns a PerformanceEntryList object that contains a list of PerformanceEntry objects.
+	 * @name performance.getEntries
+	 * @param {Object} [PerformanceEntryFilterOptions] - filter
+	 * @param {String} [PerformanceEntryFilterOptions.entryType] - entryType of PerformanceEntry object.
+	 * @param {String} [PerformanceEntryFilterOptions.initiatorType] - initiatorType of PerformanceResourceTiming object. but not spported yet.
+	 * @param {String} [PerformanceEntryFilterOptions.name] - name of PerformanceEntry object.
+	 * @return {Array} performanceEntryList
+	 * @see http://www.w3.org/TR/performance-timeline-2/#widl-Performance-getEntries-PerformanceEntryList-PerformanceEntryFilterOptions-filter
+	 */
+	global.performance.getEntries = function( filter ) {
+		if ( filter === undefined ) {
+			return performanceEntryList;
+		}
+
+		var filterCallback = function( ) { };
+
+		if ( filter.entryType ) {
+			if ( filter.name ) {
+				filterCallback = function( entry ) {
+					return entry.entryType === filter.entryType && entry.name === filter.name;
+				}
+			} else {
+				filterCallback = function( entry ) {
+					return entry.entryType === filter.entryType;
+				}
+			}
+		} else if ( filter.name ) {
+			filterCallback = function( entry ) {
+				return entry.name === filter.name;
+			}
+		}
+
+		return performanceEntryList.filter( filterCallback );
+	}
 	return function() {
 		return {
 			performanceEntryHash: performanceEntryHash,
@@ -187,11 +219,6 @@ _wrap_( function( global ) {
 		};
 	};
 } );
-
-// performance.now();
-
-// User Timing
-// performance.clearMeasures();
 
 // Performance Timeline
 // performance.getEntries();
