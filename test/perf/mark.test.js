@@ -23,18 +23,18 @@ var RestrictedKeyMap = {
 };
 
 describe("performance.mark", function() {
-	var mock = {
-		count : 0,
-		Date : function(){
-			this.getTime = function(){
-				mock.count++;
-				return mock.count;
-			}
-		}
-	};
+	var mock;
 	
 	beforeEach(function() {
-		mock.count = 0;
+		mock = {
+			count : 0,
+			Date : function(){
+				this.getTime = function(){
+					mock.count++;
+					return mock.count;
+				}
+			}
+		};
 		getPerformanceInfo = cache(mock);
 	});
 
@@ -91,18 +91,18 @@ describe("performance.mark", function() {
 
 
 describe("performance.clearMarks", function() {
-	var mock = {
-		count : 0,
-		Date : function(){
-			this.getTime = function(){
-				mock.count++;
-				return mock.count;
-			}
-		}
-	};
+	var mock;
 	
 	beforeEach(function() {
-		mock.count = 0;
+		mock = {
+			count : 0,
+			Date : function(){
+				this.getTime = function(){
+					mock.count++;
+					return mock.count;
+				}
+			}
+		};
 		getPerformanceInfo = cache(mock);
 		mock.performance.mark("something");
 	});

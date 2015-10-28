@@ -1,12 +1,10 @@
-// Reference 
+// Reference
 // http://www.w3.org/TR/performance-timeline-2/
 // http://www.w3.org/TR/user-timing/
 // https://code.google.com/p/chromium/codesearch#chromium/src/third_party/WebKit/Source/core/timing/
 
 _wrap_( function( global ) {
-	var hasPerformance = global.performance;
-
-	if ( !hasPerformance ) {
+	if ( !global.performance ) {
 		global.performance = {};
 	}
 
@@ -30,6 +28,12 @@ _wrap_( function( global ) {
 
 		performanceEntryHash = newEntryHash;
 		performanceEntryList = newEntryList;
+	}
+
+	function setupPolyfill( method, func ) {
+		if ( !global.performance[method] ) {
+			global.performance[method] = func;
+		}
 	}
 
 	var RestrictedKeyMap = {
@@ -83,9 +87,9 @@ _wrap_( function( global ) {
 	 * @return {DOMHighResTimeStamp} now
 	 * @see http://www.w3.org/TR/hr-time/#dom-performance-now
 	 */
-	global.performance.now = function() {
+	setupPolyfill( "now", function() {
 		return new global.Date().getTime() - navigationStart;
-	}
+	} );
 
 	/**
 	 * @name PerformanceEntry
@@ -108,7 +112,7 @@ _wrap_( function( global ) {
 	 * @param {String} name
 	 * @see http://www.w3.org/TR/user-timing/#dom-performance-mark
 	 */
-	global.performance.mark = function( name ) {
+	setupPolyfill( "mark", function( name ) {
 		if ( RestrictedKeyMap[name] ) {
 			throw Error( "'" + name + "' is part of the PerformanceTiming interface, and cannot be used as a mark name." );
 		}
@@ -116,7 +120,7 @@ _wrap_( function( global ) {
 		var performanceEntry = new PerformanceEntry( name, "mark", global.performance.now(), 0 );
 		performanceEntryList.push( performanceEntry );
 		performanceEntryHash[ name ] = performanceEntry;
-	}
+	} );
 
 	/**
 	 * Removes marks and their associated time values.
@@ -124,9 +128,9 @@ _wrap_( function( global ) {
 	 * @param {string} [markName] - markName
 	 * @see http://www.w3.org/TR/user-timing/#dom-performance-clearmarks
 	 */
-	global.performance.clearMarks = function( markName ) {
+	setupPolyfill( "clearMarks", function( markName ) {
 		removeEntry( "mark", markName );
-	}
+	} );
 
 	/**
 	 * This method stores the DOMHighResTimeStamp duration between two marks along with the associated name (a "measure").
@@ -136,7 +140,7 @@ _wrap_( function( global ) {
 	 * @param {string} [endMark] - endMark
 	 * @see http://www.w3.org/TR/user-timing/#dom-performance-measure
 	 */
-	global.performance.measure = function( measureName, startMark, endMark ) {
+	setupPolyfill( "measure", function( measureName, startMark, endMark ) {
 		var isUndefinedStartMark = startMark === undefined;
 		var isUndefinedEndMark = endMark === undefined;
 		var duration = 0;
@@ -164,7 +168,7 @@ _wrap_( function( global ) {
 		var performanceEntry = new PerformanceEntry( measureName, "measure", currentTime, endTime - startTime );
 		performanceEntryList.push( performanceEntry );
 		performanceEntryHash[ measureName ] = performanceEntry;
-	}
+	} );
 
 	/**
 	 * Removes measures and their associated time values.
@@ -172,9 +176,9 @@ _wrap_( function( global ) {
 	 * @param {string} [measureName] - measureName
 	 * @see http://www.w3.org/TR/user-timing/#dom-performance-clearmeasures
 	 */
-	global.performance.clearMeasures = function( measureName ) {
+	setupPolyfill( "clearMeasures", function( measureName ) {
 		removeEntry( "measure", measureName );
-	}
+	} );
 
 	/**
 	 * This method returns a PerformanceEntryList object that contains a list of PerformanceEntry objects.
@@ -186,7 +190,7 @@ _wrap_( function( global ) {
 	 * @return {Array} performanceEntryList
 	 * @see http://www.w3.org/TR/performance-timeline-2/#dom-performance-getentries
 	 */
-	global.performance.getEntries = function( filter ) {
+	setupPolyfill( "getEntries", function( filter ) {
 		if ( filter === undefined ) {
 			return performanceEntryList;
 		}
@@ -210,7 +214,7 @@ _wrap_( function( global ) {
 		}
 
 		return performanceEntryList.filter( filterCallback );
-	}
+	} );
 
 	/**
 	 * This method returns a PerformanceEntryList object returned by getEntries({'name': name}) if optional entryType is omitted, and getEntries({'name': name, 'entryType': type}) otherwise.
@@ -220,7 +224,7 @@ _wrap_( function( global ) {
 	 * @return {Array} performanceEntryList
 	 * @see http://www.w3.org/TR/performance-timeline-2/#dom-performance-getentriesbyname
 	 */
-	global.performance.getEntriesByName = function( name, entryType ) {
+	setupPolyfill( "getEntriesByName", function( name, entryType ) {
 		var filter = {
 			"name": name
 		};
@@ -230,7 +234,7 @@ _wrap_( function( global ) {
 		}
 
 		return this.getEntries( filter );
-	}
+	} );
 
 	/**
 	 * The getEntriesByType method returns a PerformanceEntryList object returned by getEntries({'entryType': type}).
@@ -238,12 +242,12 @@ _wrap_( function( global ) {
 	 * @param {String} entryType - entryType of PerformanceEntry object.
 	 * @return {Array} performanceEntryList
 	 * @see http://www.w3.org/TR/performance-timeline-2/#dom-performance-getentriesbytype
-	 */	
-	global.performance.getEntriesByType = function( entryType ) {
+	 */
+	setupPolyfill( "getEntriesByType", function( entryType ) {
 		return this.getEntries( {
 			"entryType": entryType
 		} );
-	}
+	} );
 
 	return function() {
 		return {
