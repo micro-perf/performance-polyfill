@@ -1,20 +1,31 @@
 <!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<title>perf sample</title>
-		<script type="text/javascript" src="../src/perf.js"></script>
-		<style type="text/css">
-			#test{
+<html>
+<head>
+</head>
+<body onload="init()">
+<img id="image0" src="https://www.w3.org/Icons/w3c_main.png" />
+<script>
+// ref http://www.w3.org/TR/performance-timeline-2
+	function init(){
+		performance.mark("startWork"); // see [USER-TIMING]
+		setTimeout(function () {
+			performance.mark("endWork");
+			measurePerf();	
+		}, 1000);
+	}
 
+	function measurePerf(){
+		var perfEntries = performance.getEntries();
+		for (var i = 0; i < perfEntries.length; i++) {
+			if (window.console) {
+				console.log("Name: "+ perfEntries[i].name +
+				"\nEntry Type: " + perfEntries[i].entryType +
+				"\nStart Time: " + perfEntries[i].startTime +
+				"\nDuration: "   + perfEntries[i].duration  + 
+				"\n");
 			}
-		</style>
-	</head>
-	<body>
-		<div id="test">
-		</div>
-		<script type="text/javascript">
-			
-		</script>
-	</body>
+		}
+	}
+</script>
+</body>
 </html>
