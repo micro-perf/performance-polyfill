@@ -191,7 +191,7 @@ _wrap_( function( global ) {
 			return performanceEntryList;
 		}
 
-		var filterCallback = function( ) { };
+		var filterCallback;
 
 		if ( filter.entryType ) {
 			if ( filter.name ) {
@@ -211,6 +211,27 @@ _wrap_( function( global ) {
 
 		return performanceEntryList.filter( filterCallback );
 	}
+
+	/**
+	 * This method returns a PerformanceEntryList object returned by getEntries({'name': name}) if optional entryType is omitted, and getEntries({'name': name, 'entryType': type}) otherwise.
+	 * @name performance.getEntriesByName
+	 * @param {String} [name] - name of PerformanceEntry object.
+	 * @param {String} [entryType] - entryType of PerformanceEntry object.	 
+	 * @return {Array} performanceEntryList
+	 * @see http://www.w3.org/TR/performance-timeline-2/#widl-Performance-getEntriesByName-PerformanceEntryList-DOMString-name-DOMString-type
+	 */	
+	global.performance.getEntriesByName = function( name, entryType ) {
+		var filter = {
+			"name": name
+		};
+
+		if ( entryType ){
+			filter.entryType = entryType;
+		}
+
+		return this.getEntries( filter );
+	}
+
 	return function() {
 		return {
 			performanceEntryHash: performanceEntryHash,
@@ -221,7 +242,6 @@ _wrap_( function( global ) {
 } );
 
 // Performance Timeline
-// performance.getEntries();
 // performance.getEntriesByType();
 // performance.getEntriesByName();
 

@@ -66,3 +66,45 @@ describe("performance.getEntries", function() {
 		expect(entryList[0].startTime).toBe(1);
 	});
 });
+
+describe("performance.getEntriesByName", function() {
+	var mock = {
+		count : 0,
+		Date : function(){
+			this.getTime = function(){
+				mock.count++;
+				return mock.count;
+			}
+		}
+	};
+	
+	beforeEach(function() {
+		mock.count = 0;
+		getPerformanceInfo = cache(mock);
+	});
+
+	it("If Parameter set name then it return filtered entry object list.", function() {
+		// Given
+		mock.performance.mark("foo");
+		mock.performance.measure("bar");
+		// When
+		var entryList = mock.performance.getEntriesByName("foo");
+		// Then
+		expect(entryList.length).toBe(1);
+		expect(entryList[0].name).toBe("foo");
+	});
+
+	it("If Parameter set name and entryType then it return filtered entry object list.", function() {
+		// Given
+		mock.performance.mark("bar");
+		mock.performance.mark("foo");
+		mock.performance.measure("bar");
+		// When
+		var entryList = mock.performance.getEntriesByName("bar","mark");
+		// Then
+		expect(entryList.length).toBe(1);
+		expect(entryList[0].entryType).toBe("mark");
+		expect(entryList[0].name).toBe("bar");
+		expect(entryList[0].startTime).toBe(1);
+	});
+});
