@@ -1,7 +1,7 @@
-// @TODO
-// ref - http://www.w3.org/TR/performance-timeline-2/, http://www.w3.org/TR/user-timing/
-// https://code.google.com/p/chromium/codesearch#chromium/
-// src/third_party/WebKit/Source/core/timing/PerformanceUserTiming.cpp
+// Reference 
+// http://www.w3.org/TR/performance-timeline-2/
+// http://www.w3.org/TR/user-timing/
+// https://code.google.com/p/chromium/codesearch#chromium/src/third_party/WebKit/Source/core/timing/
 
 _wrap_( function( global ) {
 	var hasPerformance = global.performance;
@@ -184,7 +184,7 @@ _wrap_( function( global ) {
 	 * @param {String} [PerformanceEntryFilterOptions.initiatorType] - initiatorType of PerformanceResourceTiming object. but not spported yet.
 	 * @param {String} [PerformanceEntryFilterOptions.name] - name of PerformanceEntry object.
 	 * @return {Array} performanceEntryList
-	 * @see http://www.w3.org/TR/performance-timeline-2/#widl-Performance-getEntries-PerformanceEntryList-PerformanceEntryFilterOptions-filter
+	 * @see http://www.w3.org/TR/performance-timeline-2/#dom-performance-getentries
 	 */
 	global.performance.getEntries = function( filter ) {
 		if ( filter === undefined ) {
@@ -215,21 +215,34 @@ _wrap_( function( global ) {
 	/**
 	 * This method returns a PerformanceEntryList object returned by getEntries({'name': name}) if optional entryType is omitted, and getEntries({'name': name, 'entryType': type}) otherwise.
 	 * @name performance.getEntriesByName
-	 * @param {String} [name] - name of PerformanceEntry object.
-	 * @param {String} [entryType] - entryType of PerformanceEntry object.	 
+	 * @param {String} name - name of PerformanceEntry object.
+	 * @param {String} [entryType] - entryType of PerformanceEntry object.
 	 * @return {Array} performanceEntryList
-	 * @see http://www.w3.org/TR/performance-timeline-2/#widl-Performance-getEntriesByName-PerformanceEntryList-DOMString-name-DOMString-type
-	 */	
+	 * @see http://www.w3.org/TR/performance-timeline-2/#dom-performance-getentriesbyname
+	 */
 	global.performance.getEntriesByName = function( name, entryType ) {
 		var filter = {
 			"name": name
 		};
 
-		if ( entryType ){
+		if ( entryType ) {
 			filter.entryType = entryType;
 		}
 
 		return this.getEntries( filter );
+	}
+
+	/**
+	 * The getEntriesByType method returns a PerformanceEntryList object returned by getEntries({'entryType': type}).
+	 * @name performance.getEntriesByType
+	 * @param {String} entryType - entryType of PerformanceEntry object.
+	 * @return {Array} performanceEntryList
+	 * @see http://www.w3.org/TR/performance-timeline-2/#dom-performance-getentriesbytype
+	 */	
+	global.performance.getEntriesByType = function( entryType ) {
+		return this.getEntries( {
+			"entryType": entryType
+		} );
 	}
 
 	return function() {
@@ -240,10 +253,6 @@ _wrap_( function( global ) {
 		};
 	};
 } );
-
-// Performance Timeline
-// performance.getEntriesByType();
-// performance.getEntriesByName();
 
 function _wrap_ ( fp ) {
 	fp( window );
