@@ -18,6 +18,7 @@ This project support performance for unsupport browsers. I made feature based [p
 <script src="https://github.com/micro-perf/performance-polyfill/blob/master/perf.js"></script>
 ```
 ### bower
+**not spport yet. But I will register to bower soon.**
 ```
 bower install perf-polyfill
 ```
