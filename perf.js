@@ -8,34 +8,43 @@ _wrap_( function( global ) {
 		global.performance = {};
 	}
 
+	// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter
+	if ( !Array.prototype.filter ) {
+		Array.prototype.filter = function( fun/*, thisArg*/ ) {
+			if ( this === void 0 || this === null ) {
+				throw new TypeError();
+			}
+
+			var t = Object( this );
+			var len = t.length >>> 0;
+			if ( typeof fun !== 'function' ) {
+				throw new TypeError();
+			}
+
+			var res = [];
+			var thisArg = arguments.length >= 2 ? arguments[1] : void 0;
+			for ( var i = 0; i < len; i++ ) {
+				if ( i in t ) {
+					var val = t[i];
+
+					// NOTE: Technically this should Object.defineProperty at
+					//       the next index, as push can be affected by
+					//       properties on Object.prototype and Array.prototype.
+					//       But that method's new, and collisions should be
+					//       rare, so use the more-compatible alternative.
+					if ( fun.call( thisArg, val, i, t ) ) {
+						res.push( val );
+					}
+				}
+			}
+			return res;
+		};
+	}
+
 	// navigationStart
 	var navigationStart =  new global.Date().getTime();
-
 	var performanceEntryHash = {};
 	var performanceEntryList = [];
-
-	function performanceReset( type ) {
-		newEntryHash = {};
-		newEntryList = [];
-		var entry;
-		for ( var i = 0, l = performanceEntryList.length; i < l; i++ ) {
-			entry = performanceEntryList[i];
-			if ( entry.entryType !== type ) {
-				newEntryHash[ entry.name ] = entry;
-				newEntryList.push( entry );
-			}
-		}
-
-		performanceEntryHash = newEntryHash;
-		performanceEntryList = newEntryList;
-	}
-
-	function setupPolyfill( method, func ) {
-		if ( !global.performance[method] ) {
-			global.performance[method] = func;
-		}
-	}
-
 	var RestrictedKeyMap = {
 		"navigationStart": true,
 		"unloadEventStart": true,
@@ -59,6 +68,43 @@ _wrap_( function( global ) {
 		"loadEventStart": true,
 		"loadEventEnd": true
 	};
+
+	/**
+	 * @name PerformanceEntry
+	 * @property {DOMString} name
+	 * @property {DOMString} entryType - mark, measure, navigation, frame, resource, server
+	 * @property {DOMHighResTimeStamp} startTime
+	 * @property {DOMHighResTimeStamp} duration
+	 * @see http://www.w3.org/TR/performance-timeline/#performanceentry
+	 */
+	function PerformanceEntry( name, entryType, startTime, duration ) {
+		this.name = name;
+		this.entryType = entryType;
+		this.startTime = startTime;
+		this.duration = duration;
+	 }
+
+	function performanceReset( type ) {
+		newEntryHash = {};
+		newEntryList = [];
+		var entry;
+		for ( var i = 0, l = performanceEntryList.length; i < l; i++ ) {
+			entry = performanceEntryList[i];
+			if ( entry.entryType !== type ) {
+				newEntryHash[ entry.name ] = entry;
+				newEntryList.push( entry );
+			}
+		}
+
+		performanceEntryHash = newEntryHash;
+		performanceEntryList = newEntryList;
+	}
+
+	function setupPolyfill( method, func ) {
+		if ( !global.performance[method] ) {
+			global.performance[method] = func;
+		}
+	}
 
 	function removeEntry( type, name ) {
 		if ( name === undefined ) {
@@ -90,21 +136,6 @@ _wrap_( function( global ) {
 	setupPolyfill( "now", function() {
 		return new global.Date().getTime() - navigationStart;
 	} );
-
-	/**
-	 * @name PerformanceEntry
-	 * @property {DOMString} name
-	 * @property {DOMString} entryType - mark, measure, navigation, frame, resource, server
-	 * @property {DOMHighResTimeStamp} startTime
-	 * @property {DOMHighResTimeStamp} duration
-	 * @see http://www.w3.org/TR/performance-timeline/#performanceentry
-	 */
-	function PerformanceEntry( name, entryType, startTime, duration ) {
-		this.name = name;
-		this.entryType = entryType;
-		this.startTime = startTime;
-		this.duration = duration;
-	 }
 
 	/**
 	 * This method stores a timestamp with the associated name (a "mark").
