@@ -8,7 +8,7 @@ This project support performance for unsupport browsers. I made feature based [p
 - **measure** : This method stores the `DOMHighResTimeStamp` duration between two marks along with the associated name (a "measure"). [[link](http://www.w3.org/TR/user-timing/#dom-performance-measure)]
 - **clearMeasures** : Removes measures and their associated time values. [[link](http://www.w3.org/TR/user-timing/#dom-performance-clearmeasures)]
 - **getEntries** : This method returns a `PerformanceEntryList` object that contains a list of `PerformanceEntry` objects. [[link](http://www.w3.org/TR/performance-timeline-2/#dom-performance-getentries)]
-- **getEntriesByName** : This method returns a `PerformanceEntryList` object returned by `getEntries({'name': name})` if optional entryType is omitted, and getEntries({'name': name, 'entryType': type}) otherwise. [[link](http://www.w3.org/TR/performance-timeline-2/#dom-performance-getentriesbyname)]
+- **getEntriesByName** : This method returns a `PerformanceEntryList` object returned by `getEntries({'name': name})` if optional entryType is omitted, and `getEntries({'name': name, 'entryType': type})` otherwise. [[link](http://www.w3.org/TR/performance-timeline-2/#dom-performance-getentriesbyname)]
 - **getEntriesByType** : The method returns a `PerformanceEntryList` object returned by `getEntries({'entryType': type})`. [[link](http://www.w3.org/TR/performance-timeline-2/#dom-performance-getentriesbytype)]
 
 ## Usage
