@@ -1,5 +1,5 @@
 # performance polyfill
-This project support performance for unsupport browsers. I made feature based [performance-timeline v2](http://www.w3.org/TR/performance-timeline-2/) and [user-timing](http://www.w3.org/TR/user-timing/) specification. I refer to [some blink code](https://code.google.com/p/chromium/codesearch#chromium/src/third_party/WebKit/Source/core/timing/) that being exception message and variable name.
+This project support performance for unsupport browsers. I made feature based [performance-timeline v2](http://www.w3.org/TR/performance-timeline-2/) and [user-timing](http://www.w3.org/TR/user-timing/) specification. I refer to [some blink code](https://code.google.com/p/chromium/codesearch#chromium/src/third_party/WebKit/Source/core/timing/) that being exception message and variable name. If you have interest in performance I recommend to read [this article](http://www.html5rocks.com/en/tutorials/webperformance/usertiming/).
 
 ## Support features
 - **now** : This method returns a `DOMHighResTimeStamp`, measured in milliseconds. [[link](http://www.w3.org/TR/hr-time/#dom-performance-now)]
