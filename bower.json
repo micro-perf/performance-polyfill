@@ -1,15 +1,25 @@
 {
-  "name": "performance-polyfill",
+  "name": "perf-polyfill",
   "version": "0.0.1",
   "homepage": "https://github.com/micro-perf/performance-polyfill/",
   "authors": [
     "YongWoo Jeon<yongwoo.jeon@navercorp.com>"
   ],
-  "description": "Performance polyfill",
-  "main": "/src/perf.js",
+  "description": "W3C performance polyfill",
+  "main": "perf.js",
   "keywords": [
     "performance",
     "polyfill"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "moduleType": [
+    "globals"
+  ],
+  "ignore": [
+    "/build",
+    "/dist",
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ]
 }
