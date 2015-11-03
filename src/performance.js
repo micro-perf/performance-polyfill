@@ -100,7 +100,24 @@ _wrap_( function( global ) {
 		performanceEntryList = newEntryList;
 	}
 
+	var getAllPerformanceEntryList;
+
 	function setupPolyfill( method, func ) {
+		if ( method == "getEntries" ) {
+			if ( global.performance.getEntries ) {
+				var oldGetEntries = global.performance.getEntries;
+				if ( oldGetEntries( { "name": "random-" + navigationStart } ).length > 0 ) {
+					getAllPerformanceEntryList = function() {
+						return oldGetEntries();
+					}
+					global.performance[method] = func;
+				}
+			} else {
+				getAllPerformanceEntryList = function() {
+					return performanceEntryList;
+				}
+			}
+		}
 		if ( !global.performance[method] ) {
 			global.performance[method] = func;
 		}
@@ -222,8 +239,10 @@ _wrap_( function( global ) {
 	 * @see http://www.w3.org/TR/performance-timeline-2/#dom-performance-getentries
 	 */
 	setupPolyfill( "getEntries", function( filter ) {
+		var perfEntryList = getAllPerformanceEntryList();
+
 		if ( filter === undefined ) {
-			return performanceEntryList;
+			return perfEntryList;
 		}
 
 		var filterCallback;
@@ -244,7 +263,7 @@ _wrap_( function( global ) {
 			}
 		}
 
-		return performanceEntryList.filter( filterCallback );
+		return perfEntryList.filter( filterCallback );
 	} );
 
 	/**
