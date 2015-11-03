@@ -25,7 +25,7 @@ bower install perf-polyfill
 ```
 git clone https://github.com/micro-perf/performance-polyfill.git
 cd performance-polyfill
-grunt
+gulp
 ```
 
 ## Licence
