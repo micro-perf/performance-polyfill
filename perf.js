@@ -105,10 +105,10 @@ _wrap_( function( global ) {
 	function setupPolyfill( method, func ) {
 		if ( method == "getEntries" ) {
 			if ( global.performance.getEntries ) {
-				var oldGetEntries = global.performance.getEntries;
-				if ( oldGetEntries( { "name": "random-" + navigationStart } ).length > 0 ) {
+				global.performance.getEntriesOld = global.performance.getEntries;
+				if ( global.performance.getEntriesOld( { "name": "random-" + navigationStart } ).length > 0 ) {
 					getAllPerformanceEntryList = function() {
-						return oldGetEntries();
+						return global.performance.getEntriesOld();
 					}
 					global.performance[method] = func;
 				}
